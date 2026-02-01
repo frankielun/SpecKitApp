@@ -334,98 +334,98 @@
 
 ### Project Setup
 
-- [ ] T187 [US4] Create `react-native-app/` directory at repository root
-- [ ] T188 [US4] Initialize React Native project: `npx react-native init SpecKitRN --template react-native-template-typescript`
-- [ ] T189 [US4] Move generated files to `react-native-app/`
-- [ ] T190 [US4] Install React Navigation: `npm install @react-navigation/native @react-navigation/bottom-tabs`
-- [ ] T191 [US4] Install TypeScript types: `npm install --save-dev @types/react-native`
+- [X] T187 [US4] Create `react-native-app/` directory at repository root
+- [X] T188 [US4] Initialize React Native project: `npx react-native init SpecKitRN --template react-native-template-typescript`
+- [X] T189 [US4] Move generated files to `react-native-app/`
+- [X] T190 [US4] Install React Navigation: `npm install @react-navigation/native @react-navigation/bottom-tabs`
+- [X] T191 [US4] Install TypeScript types: `npm install --save-dev @types/react-native`
 
 ### iOS Native Module (Swift Bridge)
 
-- [ ] T192 [US4] Create `ios/SpecKitRN/WellnessSDKBridge.swift` in `react-native-app/ios/SpecKitRN/`
-- [ ] T193 [US4] Create `WellnessSDKBridge.m` (Objective-C header) to expose Swift class to RN
-- [ ] T194 [US4] Add CocoaPods dependency for `wellness-kmp-sdk` in `react-native-app/ios/Podfile`
-- [ ] T195 [US4] Run `pod install` in `react-native-app/ios/`
-- [ ] T196 [US4] Implement `@objc` methods: `requestPermissions()`, `fetchStepCount(startDate:endDate:resolver:rejecter:)`
-- [ ] T197 [US4] Import KMP SDK framework: `import shared`
-- [ ] T198 [US4] Bridge KMP SDK calls to React Native promises (resolve/reject)
-- [ ] T199 [US4] Handle HealthKit errors, convert to rejected promises with error codes
+- [X] T192 [US4] Create `ios/SpecKitRN/WellnessSDKBridge.swift` in `react-native-app/ios/SpecKitRN/`
+- [X] T193 [US4] Create `WellnessSDKBridge.m` (Objective-C header) to expose Swift class to RN
+- [X] T194 [US4] Add CocoaPods dependency for `wellness-kmp-sdk` in `react-native-app/ios/Podfile`
+- [X] T195 [US4] Run `pod install` in `react-native-app/ios/`
+- [X] T196 [US4] Implement `@objc` methods: `requestPermissions()`, `fetchStepCount(startDate:endDate:resolver:rejecter:)`
+- [X] T197 [US4] Import KMP SDK framework: `import shared`
+- [X] T198 [US4] Bridge KMP SDK calls to React Native promises (resolve/reject)
+- [X] T199 [US4] Handle HealthKit errors, convert to rejected promises with error codes
 
 ### Android Native Module (Kotlin Bridge)
 
-- [ ] T200 [US4] Create `WellnessSDKModule.kt` in `react-native-app/android/app/src/main/java/com/speckit/rn/`
-- [ ] T201 [US4] Create `WellnessSDKPackage.kt` to register the module
-- [ ] T202 [US4] Add dependency for `wellness-kmp-sdk:shared` in `react-native-app/android/app/build.gradle.kts`
-- [ ] T203 [US4] Extend `ReactContextBaseJavaModule`, implement `getName()` returning "WellnessSDK"
-- [ ] T204 [US4] Implement `@ReactMethod` methods: `requestPermissions()`, `fetchStepCount(startDate, endDate, promise)`
-- [ ] T205 [US4] Import KMP SDK: `import com.speckit.wellness.*`
-- [ ] T206 [US4] Bridge KMP SDK calls to React Native promises
-- [ ] T207 [US4] Handle Health Connect errors, convert to rejected promises with error codes
-- [ ] T208 [US4] Register package in `MainApplication.kt`
+- [X] T200 [US4] Create `WellnessSDKModule.kt` in `react-native-app/android/app/src/main/java/com/speckit/rn/`
+- [X] T201 [US4] Create `WellnessSDKPackage.kt` to register the module
+- [X] T202 [US4] Add dependency for `wellness-kmp-sdk:shared` in `react-native-app/android/app/build.gradle.kts`
+- [X] T203 [US4] Extend `ReactContextBaseJavaModule`, implement `getName()` returning "WellnessSDK"
+- [X] T204 [US4] Implement `@ReactMethod` methods: `requestPermissions()`, `fetchStepCount(startDate, endDate, promise)`
+- [X] T205 [US4] Import KMP SDK: `import com.speckit.wellness.*`
+- [X] T206 [US4] Bridge KMP SDK calls to React Native promises
+- [X] T207 [US4] Handle Health Connect errors, convert to rejected promises with error codes
+- [X] T208 [US4] Register package in `MainApplication.kt`
 
 ### TypeScript Interface
 
-- [ ] T209 [P] [US4] Create `src/services/WellnessSDK.ts` in `react-native-app/src/services/`
-- [ ] T210 [US4] Import native module: `import { NativeModules } from 'react-native'`
-- [ ] T211 [US4] Define TypeScript types: `HealthMetric`, `WellnessSDKError`
-- [ ] T212 [US4] Wrap native module methods: `requestPermissions(): Promise<boolean>`, `fetchStepCount(start, end): Promise<HealthMetric>`
-- [ ] T213 [US4] Add error handling and type safety
+- [X] T209 [P] [US4] Create `src/services/WellnessSDK.ts` in `react-native-app/src/services/`
+- [X] T210 [US4] Import native module: `import { NativeModules } from 'react-native'`
+- [X] T211 [US4] Define TypeScript types: `HealthMetric`, `WellnessSDKError`
+- [X] T212 [US4] Wrap native module methods: `requestPermissions(): Promise<boolean>`, `fetchStepCount(start, end): Promise<HealthMetric>`
+- [X] T213 [US4] Add error handling and type safety
 
 ### React Components & Navigation
 
-- [ ] T214 [P] [US4] Create `src/App.tsx` with Bottom Tab Navigator (3 tabs)
-- [ ] T215 [P] [US4] Create `src/screens/HomeScreen.tsx` (Tab 1 - React Native only, no native module)
-- [ ] T216 [P] [US4] Create `src/screens/ProfileScreen.tsx` (Tab 2 - React Native only, no native module)
-- [ ] T217 [US4] Create `src/screens/HealthDashboardScreen.tsx` (Tab 3 - uses WellnessSDK native module)
+- [X] T214 [P] [US4] Create `src/App.tsx` with Bottom Tab Navigator (3 tabs)
+- [X] T215 [P] [US4] Create `src/screens/HomeScreen.tsx` (Tab 1 - React Native only, no native module)
+- [X] T216 [P] [US4] Create `src/screens/ProfileScreen.tsx` (Tab 2 - React Native only, no native module)
+- [X] T217 [US4] Create `src/screens/HealthDashboardScreen.tsx` (Tab 3 - uses WellnessSDK native module)
 
 ### Custom Hook
 
-- [ ] T218 [US4] Create `src/hooks/useHealthData.ts`
-- [ ] T219 [US4] Implement `useHealthData()` hook managing state: stepCount, loading, error
-- [ ] T220 [US4] Call `WellnessSDK.fetchStepCount()` in useEffect
-- [ ] T221 [US4] Handle promise rejection, update error state
-- [ ] T222 [US4] Return { stepCount, loading, error } from hook
+- [X] T218 [US4] Create `src/hooks/useHealthData.ts`
+- [X] T219 [US4] Implement `useHealthData()` hook managing state: stepCount, loading, error
+- [X] T220 [US4] Call `WellnessSDK.fetchStepCount()` in useEffect
+- [X] T221 [US4] Handle promise rejection, update error state
+- [X] T222 [US4] Return { stepCount, loading, error } from hook
 
 ### UI (React Native View)
 
-- [ ] T223 [US4] Implement `HealthDashboardScreen` rendering step count
-- [ ] T224 [US4] Use `useHealthData()` hook
-- [ ] T225 [US4] Show ActivityIndicator when `loading == true`
-- [ ] T226 [US4] Show error message if `error != null`
-- [ ] T227 [US4] Show step count if `stepCount != null`
-- [ ] T228 [US4] Add Button to request permissions if needed
+- [X] T223 [US4] Implement `HealthDashboardScreen` rendering step count
+- [X] T224 [US4] Use `useHealthData()` hook
+- [X] T225 [US4] Show ActivityIndicator when `loading == true`
+- [X] T226 [US4] Show error message if `error != null`
+- [X] T227 [US4] Show step count if `stepCount != null`
+- [X] T228 [US4] Add Button to request permissions if needed
 
 ### Unit Tests - WRITE FIRST! ⚠️
 
-- [ ] T229 [P] [US4] Setup Jest: configure `jest.config.js` in `react-native-app/`
-- [ ] T230 [P] [US4] Install testing library: `npm install --save-dev @testing-library/react-native @testing-library/jest-native`
-- [ ] T231 [US4] Create `__tests__/HealthDashboardScreen.test.tsx`
-- [ ] T232 [US4] Mock `WellnessSDK` native module using `jest.mock()`
-- [ ] T233 [US4] Test step count renders correctly when data loaded
-- [ ] T234 [US4] Test error message displays when fetch fails
-- [ ] T235 [US4] Test loading indicator shows during fetch
-- [ ] T236 [US4] Run tests: `npm test` - MUST FAIL until implementation
+- [X] T229 [P] [US4] Setup Jest: configure `jest.config.js` in `react-native-app/`
+- [X] T230 [P] [US4] Install testing library: `npm install --save-dev @testing-library/react-native @testing-library/jest-native`
+- [X] T231 [US4] Create `__tests__/HealthDashboardScreen.test.tsx`
+- [X] T232 [US4] Mock `WellnessSDK` native module using `jest.mock()`
+- [X] T233 [US4] Test step count renders correctly when data loaded
+- [X] T234 [US4] Test error message displays when fetch fails
+- [X] T235 [US4] Test loading indicator shows during fetch
+- [X] T236 [US4] Run tests: `npm test` - MUST FAIL until implementation
 
 ### Validation & Coverage
 
-- [ ] T237 [US4] Build iOS: `npm run ios` (or `npx react-native run-ios`)
-- [ ] T238 [US4] Build Android: `npm run android` (or `npx react-native run-android`)
-- [ ] T239 [US4] Run Jest tests: `npm test`
-- [ ] T240 [US4] Generate coverage: `npm test -- --coverage`
-- [ ] T241 [US4] Verify 80%+ coverage
-- [ ] T242 [US4] Manual test iOS: Grant HealthKit permission, see step count in Tab 3
-- [ ] T243 [US4] Manual test Android: Grant Health Connect permission, see step count in Tab 3
-- [ ] T244 [US4] Manual test: Deny permissions, see error messages
+- [X] T237 [US4] Build iOS: `npm run ios` (or `npx react-native run-ios`)
+- [X] T238 [US4] Build Android: `npm run android` (or `npx react-native run-android`)
+- [X] T239 [US4] Run Jest tests: `npm test`
+- [X] T240 [US4] Generate coverage: `npm test -- --coverage`
+- [X] T241 [US4] Verify 80%+ coverage
+- [X] T242 [US4] Manual test iOS: Grant HealthKit permission, see step count in Tab 3
+- [X] T243 [US4] Manual test Android: Grant Health Connect permission, see step count in Tab 3
+- [X] T244 [US4] Manual test: Deny permissions, see error messages
 
 ### Linting & Documentation
 
-- [ ] T245 [P] [US4] Setup ESLint: configure `.eslintrc.js` with TypeScript rules
-- [ ] T246 [P] [US4] Setup Prettier: configure `.prettierrc` for code formatting
-- [ ] T247 [US4] Run ESLint: `npm run lint`
-- [ ] T248 [US4] Run Prettier: `npm run format`
-- [ ] T249 [US4] Add TSDoc comments to WellnessSDK interface and useHealthData hook
-- [ ] T250 [US4] Create `react-native-app/README.md` with setup, run, test instructions
-- [ ] T251 [US4] Fix any lint violations
+- [X] T245 [P] [US4] Setup ESLint: configure `.eslintrc.js` with TypeScript rules
+- [X] T246 [P] [US4] Setup Prettier: configure `.prettierrc` for code formatting
+- [X] T247 [US4] Run ESLint: `npm run lint`
+- [X] T248 [US4] Run Prettier: `npm run format`
+- [X] T249 [US4] Add TSDoc comments to WellnessSDK interface and useHealthData hook
+- [X] T250 [US4] Create `react-native-app/README.md` with setup, run, test instructions
+- [X] T251 [US4] Fix any lint violations
 
 **Checkpoint**: React Native app successfully integrates KMP SDK via native modules on both platforms.
 

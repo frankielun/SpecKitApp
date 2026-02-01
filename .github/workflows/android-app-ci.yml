@@ -1,0 +1,71 @@
+name: Android App CI
+
+on:
+  push:
+    branches: [ main, 001-kmp-health-sdk-poc ]
+    paths:
+      - 'android-app/**'
+      - 'wellness-kmp-sdk/**'
+      - '.github/workflows/android-app-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android-app/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+    
+    - name: Grant execute permission for gradlew
+      run: |
+        chmod +x wellness-kmp-sdk/gradlew
+        chmod +x android-app/gradlew
+    
+    - name: Build KMP SDK
+      run: ./gradlew shared:build
+      working-directory: wellness-kmp-sdk
+    
+    - name: Build Android App
+      run: ./gradlew assembleDebug
+      working-directory: android-app
+    
+    - name: Run unit tests
+      run: ./gradlew test
+      working-directory: android-app
+    
+    - name: Run lint
+      run: ./gradlew lint
+      working-directory: android-app
+      continue-on-error: true
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-test-results
+        path: android-app/app/build/test-results/
+    
+    - name: Upload lint results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-lint-results
+        path: android-app/app/build/reports/lint-results-debug.html
+      continue-on-error: true
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-app-debug
+        path: android-app/app/build/outputs/apk/debug/*.apk

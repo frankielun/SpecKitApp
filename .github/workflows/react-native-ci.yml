@@ -1,0 +1,60 @@
+name: React Native CI
+
+on:
+  push:
+    branches: [ main, 001-kmp-health-sdk-poc ]
+    paths:
+      - 'react-native-app/**'
+      - '.github/workflows/react-native-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'react-native-app/**'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: react-native-app/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: react-native-app
+    
+    - name: Run ESLint
+      run: npm run lint
+      working-directory: react-native-app
+      continue-on-error: true
+    
+    - name: Run Prettier check
+      run: npm run format:check
+      working-directory: react-native-app
+      continue-on-error: true
+    
+    - name: Run Jest tests
+      run: npm test -- --coverage
+      working-directory: react-native-app
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: react-native-app/coverage/lcov.info
+        flags: react-native
+        name: react-native-coverage
+      continue-on-error: true
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: react-native-test-results
+        path: react-native-app/coverage/

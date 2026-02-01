@@ -1,0 +1,54 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ main, 001-kmp-health-sdk-poc ]
+    paths:
+      - 'flutter-app/**'
+      - '.github/workflows/flutter-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'flutter-app/**'
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+    
+    - name: Get dependencies
+      run: flutter pub get
+      working-directory: flutter-app
+    
+    - name: Run Flutter analyze
+      run: flutter analyze
+      working-directory: flutter-app
+      continue-on-error: true
+    
+    - name: Run Flutter tests
+      run: flutter test --coverage
+      working-directory: flutter-app
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: flutter-app/coverage/lcov.info
+        flags: flutter
+        name: flutter-coverage
+      continue-on-error: true
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: flutter-test-results
+        path: flutter-app/coverage/

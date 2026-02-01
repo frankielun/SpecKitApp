@@ -1,5 +1,8 @@
 # GitHub Copilot configuration (may contain credentials)
-.github/
+.github/copilot/
+
+# GitHub Actions workflows (keep these)
+!.github/workflows/
 
 # Kotlin/JVM
 *.class

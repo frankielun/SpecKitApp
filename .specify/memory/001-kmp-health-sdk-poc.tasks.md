@@ -244,70 +244,70 @@
 
 ### Project Setup
 
-- [ ] T131 [US3] Create `android-app/` directory at repository root
-- [ ] T132 [US3] Initialize Android project with Gradle in `android-app/build.gradle.kts`
-- [ ] T133 [US3] Create `android-app/settings.gradle.kts` including `wellness-kmp-sdk:shared` module
-- [ ] T134 [US3] Configure `android-app/app/build.gradle.kts` with Jetpack Compose dependencies
-- [ ] T135 [US3] Set `minSdk = 26`, `targetSdk = 34`, `compileSdk = 34`
-- [ ] T136 [US3] Add dependency: `implementation(project(":wellness-kmp-sdk:shared"))`
-- [ ] T137 [US3] Add dependency: `androidx.health.connect:connect-client:1.1.0-alpha07`
-- [ ] T138 [US3] Add Health Connect permissions in `AndroidManifest.xml`: `android.permission.health.READ_STEPS`
+- [X] T131 [US3] Create `android-app/` directory at repository root
+- [X] T132 [US3] Initialize Android project with Gradle in `android-app/build.gradle.kts`
+- [X] T133 [US3] Create `android-app/settings.gradle.kts` including `wellness-kmp-sdk:shared` module
+- [X] T134 [US3] Configure `android-app/app/build.gradle.kts` with Jetpack Compose dependencies
+- [X] T135 [US3] Set `minSdk = 26`, `targetSdk = 34`, `compileSdk = 34`
+- [X] T136 [US3] Add dependency: `implementation(project(":wellness-kmp-sdk:shared"))`
+- [X] T137 [US3] Add dependency: `androidx.health.connect:connect-client:1.1.0-alpha07`
+- [X] T138 [US3] Add Health Connect permissions in `AndroidManifest.xml`: `android.permission.health.READ_STEPS`
 
 ### App Structure & Navigation
 
-- [ ] T139 [P] [US3] Create `MainActivity.kt` in `android-app/app/src/main/kotlin/com/speckit/android/`
-- [ ] T140 [US3] Setup Jetpack Compose with Scaffold + BottomNavigation (3 tabs)
-- [ ] T141 [P] [US3] Create `HomeScreen.kt` in `android-app/app/src/main/kotlin/com/speckit/android/ui/` (Tab 1 - native only)
-- [ ] T142 [P] [US3] Create `ProfileScreen.kt` in `android-app/app/src/main/kotlin/com/speckit/android/ui/` (Tab 2 - native only)
-- [ ] T143 [US3] Create `HealthDashboardScreen.kt` in `android-app/app/src/main/kotlin/com/speckit/android/ui/` (Tab 3 - KMP SDK)
+- [X] T139 [P] [US3] Create `MainActivity.kt` in `android-app/app/src/main/kotlin/com/speckit/android/`
+- [X] T140 [US3] Setup Jetpack Compose with Scaffold + BottomNavigation (3 tabs)
+- [X] T141 [P] [US3] Create `HomeScreen.kt` in `android-app/app/src/main/kotlin/com/speckit/android/ui/` (Tab 1 - native only)
+- [X] T142 [P] [US3] Create `ProfileScreen.kt` in `android-app/app/src/main/kotlin/com/speckit/android/ui/` (Tab 2 - native only)
+- [X] T143 [US3] Create `HealthDashboardScreen.kt` in `android-app/app/src/main/kotlin/com/speckit/android/ui/` (Tab 3 - KMP SDK)
 
 ### Repository Layer (Kotlin Wrapper for KMP SDK)
 
-- [ ] T144 [US3] Create `HealthRepository.kt` in `android-app/app/src/main/kotlin/com/speckit/android/repository/`
-- [ ] T145 [US3] Accept `Context` as constructor parameter
-- [ ] T146 [US3] Create `HealthDataProvider` instance from KMP SDK (pass context)
-- [ ] T147 [US3] Create `HealthDataRepository` instance from KMP SDK
-- [ ] T148 [US3] Wrap `requestPermissions()` in suspend function
-- [ ] T149 [US3] Wrap `getStepCount()` in suspend function, convert Long timestamps from LocalDate
-- [ ] T150 [US3] Handle Health Connect not installed: check availability, return user-friendly error
-- [ ] T151 [US3] Map `HealthResult` sealed class to domain-specific result types
+- [X] T144 [US3] Create `HealthRepository.kt` in `android-app/app/src/main/kotlin/com/speckit/android/repository/`
+- [X] T145 [US3] Accept `Context` as constructor parameter
+- [X] T146 [US3] Create `HealthDataProvider` instance from KMP SDK (pass context)
+- [X] T147 [US3] Create `HealthDataRepository` instance from KMP SDK
+- [X] T148 [US3] Wrap `requestPermissions()` in suspend function
+- [X] T149 [US3] Wrap `getStepCount()` in suspend function, convert Long timestamps from LocalDate
+- [X] T150 [US3] Handle Health Connect not installed: check availability, return user-friendly error
+- [X] T151 [US3] Map `HealthResult` sealed class to domain-specific result types
 
 ### ViewModel
 
-- [ ] T152 [US3] Create `HealthDashboardViewModel.kt` in `android-app/app/src/main/kotlin/com/speckit/android/viewmodel/`
-- [ ] T153 [US3] Extend `ViewModel` from androidx.lifecycle
-- [ ] T154 [US3] Add `StateFlow<Int?> stepCount`
-- [ ] T155 [US3] Add `StateFlow<Boolean> isLoading`
-- [ ] T156 [US3] Add `StateFlow<String?> errorMessage`
-- [ ] T157 [US3] Implement `fetchStepCount()` launching coroutine in `viewModelScope`
-- [ ] T158 [US3] Implement `requestPermissions()` using Activity Result API
-- [ ] T159 [US3] Update StateFlows appropriately during loading/success/error
+- [X] T152 [US3] Create `HealthDashboardViewModel.kt` in `android-app/app/src/main/kotlin/com/speckit/android/viewmodel/`
+- [X] T153 [US3] Extend `ViewModel` from androidx.lifecycle
+- [X] T154 [US3] Add `StateFlow<Int?> stepCount`
+- [X] T155 [US3] Add `StateFlow<Boolean> isLoading`
+- [X] T156 [US3] Add `StateFlow<String?> errorMessage`
+- [X] T157 [US3] Implement `fetchStepCount()` launching coroutine in `viewModelScope`
+- [X] T158 [US3] Implement `requestPermissions()` using Activity Result API
+- [X] T159 [US3] Update StateFlows appropriately during loading/success/error
 
 ### UI (Jetpack Compose)
 
-- [ ] T160 [US3] Implement `HealthDashboardScreen` Composable displaying step count
-- [ ] T161 [US3] Show CircularProgressIndicator when `isLoading == true`
-- [ ] T162 [US3] Show error message if `errorMessage != null`
-- [ ] T163 [US3] Show step count if `stepCount != null`
-- [ ] T164 [US3] Add Button to request permissions if denied
-- [ ] T165 [US3] Use `LaunchedEffect` to fetch data on composition
-- [ ] T166 [US3] Observe ViewModel StateFlows with `collectAsState()`
+- [X] T160 [US3] Implement `HealthDashboardScreen` Composable displaying step count
+- [X] T161 [US3] Show CircularProgressIndicator when `isLoading == true`
+- [X] T162 [US3] Show error message if `errorMessage != null`
+- [X] T163 [US3] Show step count if `stepCount != null`
+- [X] T164 [US3] Add Button to request permissions if denied
+- [X] T165 [US3] Use `LaunchedEffect` to fetch data on composition
+- [X] T166 [US3] Observe ViewModel StateFlows with `collectAsState()`
 
 ### Unit Tests - WRITE FIRST! ⚠️
 
-- [ ] T167 [P] [US3] Setup test dependencies: JUnit, MockK, kotlinx-coroutines-test in `app/build.gradle.kts`
-- [ ] T168 [US3] Create `HealthRepositoryTest.kt` in `android-app/app/src/test/kotlin/com/speckit/android/repository/`
-- [ ] T169 [US3] Mock `HealthDataProvider` from KMP SDK
-- [ ] T170 [US3] Test `fetchStepCount()` success returns correct value
-- [ ] T171 [US3] Test `fetchStepCount()` permission denied returns error
-- [ ] T172 [US3] Test `fetchStepCount()` Health Connect not installed returns error
-- [ ] T173 [US3] Test date conversion utilities (LocalDate → Long timestamp)
-- [ ] T174 [US3] Run tests: `./gradlew android-app:app:testDebugUnitTest` - MUST FAIL until implementation
+- [X] T167 [P] [US3] Setup test dependencies: JUnit, MockK, kotlinx-coroutines-test in `app/build.gradle.kts`
+- [X] T168 [US3] Create `HealthRepositoryTest.kt` in `android-app/app/src/test/kotlin/com/speckit/android/repository/`
+- [X] T169 [US3] Mock `HealthDataProvider` from KMP SDK
+- [X] T170 [US3] Test `fetchStepCount()` success returns correct value
+- [X] T171 [US3] Test `fetchStepCount()` permission denied returns error
+- [X] T172 [US3] Test `fetchStepCount()` Health Connect not installed returns error
+- [X] T173 [US3] Test date conversion utilities (LocalDate → Long timestamp)
+- [X] T174 [US3] Run tests: `./gradlew android-app:app:testDebugUnitTest` - MUST FAIL until implementation
 
 ### Validation & Coverage
 
-- [ ] T175 [US3] Build Android app: `./gradlew android-app:app:assembleDebug`
-- [ ] T176 [US3] Run unit tests: `./gradlew android-app:app:testDebugUnitTest`
+- [X] T175 [US3] Build Android app: `./gradlew android-app:app:assembleDebug`
+- [X] T176 [US3] Run unit tests: `./gradlew android-app:app:testDebugUnitTest`
 - [ ] T177 [US3] Generate coverage report: `./gradlew android-app:app:jacocoTestReport`
 - [ ] T178 [US3] Verify 80%+ coverage
 - [ ] T179 [US3] Manual test: Run app on emulator, install Health Connect, grant permission, see step count

@@ -25,6 +25,12 @@ kotlin {
                 freeCompilerArgs.add("-Xallocator=custom")
             }
         }
+        
+        // Export framework for CocoaPods
+        binaries.framework {
+            baseName = "shared"
+            isStatic = true
+        }
     }
 
     sourceSets {

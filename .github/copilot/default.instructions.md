@@ -2,15 +2,15 @@
 
 ## Project Overview
 
-**SpecKitApp** is a proof-of-concept (PoC) project demonstrating the creation and integration of **SpecKit**, a Kotlin Multiplatform (KMP) SDK for health and wellness functionality across multiple native and cross-platform mobile frameworks.
+**SpecKitApp** is a proof-of-concept (PoC) project demonstrating the creation and integration of a Kotlin Multiplatform (KMP) SDK for health and wellness functionality across multiple native and cross-platform mobile frameworks.
 
 ### Project Goals
 
-1. **Create SpecKit SDK** (`speckit-sdk`) - A KMP SDK with Compose Multiplatform that provides unified health data access via:
+1. **Create a KMP SDK** (`wellness-kmp-sdk`) with Compose Multiplatform that provides health data access via:
    - **iOS**: HealthKit
    - **Android**: Health Connect
 
-2. **Demonstrate SpecKit Integration** across four demo applications:
+2. **Demonstrate SDK Integration** across four demo applications:
    - Native iOS app (Swift/SwiftUI)
    - Native Android app (Kotlin/Jetpack Compose)
    - React Native app (iOS + Android)
@@ -24,7 +24,7 @@
 
 ```
 SpecKitApp/
-├── speckit-sdk/                # SpecKit KMP SDK (shared Kotlin code + Compose Multiplatform)
+├── wellness-kmp-sdk/           # KMP SDK (shared Kotlin code + Compose Multiplatform)
 │   ├── shared/                 # Shared KMP module
 │   │   ├── src/
 │   │   │   ├── commonMain/     # Common Kotlin code

@@ -1,2 +1,88 @@
 # GitHub Copilot configuration (may contain credentials)
 .github/
+
+# Kotlin/JVM
+*.class
+*.jar
+*.log
+.gradle/
+build/
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Android
+*.apk
+*.aab
+*.dex
+*.ap_
+*.iml
+.idea/
+local.properties
+.externalNativeBuild/
+.cxx/
+captures/
+
+# iOS/Swift
+*.xcodeproj
+!*.xcodeproj/project.pbxproj
+!*.xcworkspace/contents.xcworkspacedata
+*.xccheckout
+*.xcscmblueprint
+xcuserdata/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+.DS_Store
+Pods/
+.swiftpm/
+
+# React Native
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.expo/
+.expo-shared/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+pubspec.lock
+*.g.dart
+*.freezed.dart
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.keystore
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Build outputs
+out/
+target/
+*.log

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SpecKit Android</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_profile">Profile</string>
+    <string name="tab_health">Health</string>
+    <string name="health_permission_rationale">SpecKit needs access to your step count data to demonstrate the Kotlin Multiplatform SDK integration with Health Connect.</string>
+</resources>

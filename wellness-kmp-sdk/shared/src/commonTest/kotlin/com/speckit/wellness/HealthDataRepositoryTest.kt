@@ -2,6 +2,7 @@ package com.speckit.wellness
 
 import com.speckit.wellness.models.HealthMetric
 import com.speckit.wellness.models.HealthResult
+import com.speckit.wellness.models.HeartRateMeasurement
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -154,6 +155,108 @@ class HealthDataRepositoryTest {
         // Assert
         assertTrue(result is HealthResult.PermissionDenied, "Expected PermissionDenied result")
     }
+    
+    /**
+     * T330: Test successful heart rate fetching.
+     */
+    @Test
+    fun testGetHeartRateSuccess() = runTest {
+        // Arrange
+        val mockMeasurements = listOf(
+            HeartRateMeasurement(beatsPerMinute = 72.0, timestamp = 1000L, source = "test"),
+            HeartRateMeasurement(beatsPerMinute = 75.0, timestamp = 2000L, source = "test")
+        )
+        val mockProvider = MockHealthDataProvider(
+            heartRateResult = HealthResult.Success(mockMeasurements)
+        )
+        val repository = HealthDataRepository(mockProvider)
+        
+        // Act
+        val result = repository.getHeartRate(0L, 3000L)
+        
+        // Assert
+        assertTrue(result.isSuccess(), "Expected success result")
+        assertEquals(2, (result as HealthResult.Success).data.size)
+        assertEquals(72.0, result.data[0].beatsPerMinute)
+        assertEquals(75.0, result.data[1].beatsPerMinute)
+    }
+    
+    /**
+     * T331: Test heart rate empty data case.
+     */
+    @Test
+    fun testGetHeartRateEmptyData() = runTest {
+        // Arrange
+        val mockProvider = MockHealthDataProvider(
+            heartRateResult = HealthResult.Success(emptyList())
+        )
+        val repository = HealthDataRepository(mockProvider)
+        
+        // Act
+        val result = repository.getHeartRate(0L, 1000L)
+        
+        // Assert
+        assertTrue(result.isSuccess(), "Expected success result with empty list")
+        assertTrue((result as HealthResult.Success).data.isEmpty(), "Expected empty list")
+    }
+    
+    /**
+     * T332: Test heart rate permission denied case.
+     */
+    @Test
+    fun testGetHeartRatePermissionDenied() = runTest {
+        // Arrange
+        val mockProvider = MockHealthDataProvider(
+            heartRateResult = HealthResult.PermissionDenied("Heart rate permission denied")
+        )
+        val repository = HealthDataRepository(mockProvider)
+        
+        // Act
+        val result = repository.getHeartRate(0L, 1000L)
+        
+        // Assert
+        assertTrue(result is HealthResult.PermissionDenied, "Expected PermissionDenied result")
+    }
+    
+    /**
+     * Test heart rate input validation - startDate > endDate should fail.
+     */
+    @Test
+    fun testGetHeartRateInvalidDateRange() = runTest {
+        // Arrange
+        val mockProvider = MockHealthDataProvider()
+        val repository = HealthDataRepository(mockProvider)
+        
+        // Act
+        val result = repository.getHeartRate(1000L, 500L)
+        
+        // Assert
+        assertTrue(result is HealthResult.UnknownError, "Expected UnknownError for invalid date range")
+        assertTrue(
+            (result as HealthResult.UnknownError).message.contains("before"),
+            "Error message should mention date ordering"
+        )
+    }
+    
+    /**
+     * Test heart rate input validation - negative timestamps should fail.
+     */
+    @Test
+    fun testGetHeartRateNegativeTimestamps() = runTest {
+        // Arrange
+        val mockProvider = MockHealthDataProvider()
+        val repository = HealthDataRepository(mockProvider)
+        
+        // Act
+        val result = repository.getHeartRate(-100L, 1000L)
+        
+        // Assert
+        assertTrue(result is HealthResult.UnknownError, "Expected UnknownError for negative timestamp")
+        assertTrue(
+            (result as HealthResult.UnknownError).message.contains("negative"),
+            "Error message should mention negative values"
+        )
+    }
 }
 
 /**
@@ -164,7 +267,8 @@ private class MockHealthDataProvider(
     private val authResult: HealthResult<Boolean> = HealthResult.Success(true),
     private val stepCountResult: HealthResult<HealthMetric> = HealthResult.Success(
         HealthMetric("step_count", 0.0, "steps", 0L, "mock")
-    )
+    ),
+    private val heartRateResult: HealthResult<List<HeartRateMeasurement>> = HealthResult.Success(emptyList())
 ) : HealthDataProvider {
     
     override suspend fun requestAuthorization(): HealthResult<Boolean> {
@@ -173,5 +277,9 @@ private class MockHealthDataProvider(
     
     override suspend fun fetchStepCount(startDate: Long, endDate: Long): HealthResult<HealthMetric> {
         return stepCountResult
+    }
+    
+    override suspend fun fetchHeartRate(startDate: Long, endDate: Long): HealthResult<List<HeartRateMeasurement>> {
+        return heartRateResult
     }
 }

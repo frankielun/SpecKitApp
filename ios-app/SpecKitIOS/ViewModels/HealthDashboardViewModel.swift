@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import shared
 
 /// T098: ViewModel for Health Dashboard (ObservableObject pattern)
 @MainActor
@@ -8,6 +9,9 @@ class HealthDashboardViewModel: ObservableObject {
     
     /// T100: Current step count
     @Published var stepCount: Int?
+    
+    /// T337: Current heart rate (average)
+    @Published var heartRate: Double?
     
     /// T101: Loading state
     @Published var isLoading: Bool = false
@@ -34,9 +38,9 @@ class HealthDashboardViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            // Calculate date range (last 7 days)
+            // Calculate date range (today)
             let endDate = Date()
-            let startDate = Calendar.current.date(byAdding: .day, value: -7, to: endDate) ?? endDate
+            let startDate = Calendar.current.startOfDay(for: endDate)
             
             // T103: Call service layer
             let count = try await healthService.fetchStepCount(from: startDate, to: endDate)
@@ -51,6 +55,41 @@ class HealthDashboardViewModel: ObservableObject {
         }
     }
     
+    /// T337: Fetch heart rate from KMP SDK
+    func fetchHeartRate() async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            // Calculate date range (today)
+            let endDate = Date()
+            let startDate = Calendar.current.startOfDay(for: endDate)
+            
+            // Call service layer
+            let measurements = try await healthService.fetchHeartRate(from: startDate, to: endDate)
+            
+            // Calculate average heart rate
+            if !measurements.isEmpty {
+                let totalBpm = measurements.reduce(0.0) { $0 + $1.beatsPerMinute }
+                self.heartRate = totalBpm / Double(measurements.count)
+            } else {
+                self.heartRate = nil
+            }
+            
+            self.isLoading = false
+        } catch {
+            // Handle errors
+            self.errorMessage = error.localizedDescription
+            self.isLoading = false
+        }
+    }
+    
+    /// T335: Fetch all health data (steps + heart rate)
+    func fetchAllHealthData() async {
+        await fetchStepCount()
+        await fetchHeartRate()
+    }
+    
     /// T104: Request health data permissions
     /// T105: Update states appropriately
     func requestPermissions() async {
@@ -63,7 +102,7 @@ class HealthDashboardViewModel: ObservableObject {
             
             if granted {
                 // If permissions granted, automatically fetch data
-                await fetchStepCount()
+                await fetchAllHealthData()
             } else {
                 self.errorMessage = "Permissions were not granted"
                 self.isLoading = false

@@ -2,6 +2,7 @@ package com.speckit.wellness
 
 import com.speckit.wellness.models.HealthMetric
 import com.speckit.wellness.models.HealthResult
+import com.speckit.wellness.models.HeartRateMeasurement
 
 /**
  * T022: Repository for accessing health data with business logic.
@@ -43,5 +44,26 @@ class HealthDataRepository(
         
         // Delegate to provider
         return provider.fetchStepCount(startDate, endDate)
+    }
+    
+    /**
+     * T320: Get heart rate data for a specific time period.
+     * 
+     * @param startDate Unix timestamp (milliseconds) for the start of the period
+     * @param endDate Unix timestamp (milliseconds) for the end of the period
+     * @return Success with list of heart rate measurements, or appropriate error
+     */
+    suspend fun getHeartRate(startDate: Long, endDate: Long): HealthResult<List<HeartRateMeasurement>> {
+        // Input validation
+        if (startDate < 0 || endDate < 0) {
+            return HealthResult.UnknownError("Timestamps cannot be negative")
+        }
+        
+        if (startDate >= endDate) {
+            return HealthResult.UnknownError("Start date must be before end date")
+        }
+        
+        // Delegate to provider
+        return provider.fetchHeartRate(startDate, endDate)
     }
 }

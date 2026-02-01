@@ -60,24 +60,61 @@ struct HealthDashboardView: View {
                 
                 // T109: Show step count if available
                 else if let stepCount = viewModel.stepCount {
-                    VStack(spacing: 20) {
-                        Image(systemName: "figure.walk")
-                            .font(.system(size: 80))
-                            .foregroundColor(.green)
-                        
-                        VStack(spacing: 8) {
-                            Text("\(stepCount)")
-                                .font(.system(size: 56, weight: .bold, design: .rounded))
-                                .foregroundColor(.primary)
-                            
-                            Text("steps (last 7 days)")
-                                .font(.title3)
-                                .foregroundColor(.secondary)
-                        }
-                        
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            // Step Count Card
+                            VStack(spacing: 20) {
+                                Image(systemName: "figure.walk")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.green)
+                                
+                                VStack(spacing: 8) {
+                                    Text("\(stepCount)")
+                                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                                        .foregroundColor(.primary)
+                                    
+                                    Text("steps today")
+                                        .font(.title3)
+                                        .foregroundColor(.secondary)
+                                
+                                Text("steps today")
+                                        .font(.title3)
+                                        .foregroundColor(.secondary)
                         Divider()
-                            .padding(.horizontal, 40)
+                            .padding(.horizontal, 20)
                         
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                Text("Data fetched via KMP SDK")
+                                    .font(.footnote)
+                            }
+                            
+                            HStack {
+                                Image(systemName: "cpu")
+                                    .foregroundColor(.blue)
+                                Text("Platform: iOS (HealthKit)")
+                                    .font(.footnote)
+                            }
+                            
+                            HStack {
+                                Image(systemName: "calendar")
+                                    .foregroundColor(.orange)
+                                Text("Period: Today")
+                                    .font(.footnote)
+                            }
+                        }
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(12)
+                        
+                        Button(action: {
+                            Task {
+                                await viewModel.fetchAllHealthData()
+                            }
+                        }) {
+                            Label("Refresh All Data
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
@@ -137,12 +174,10 @@ struct HealthDashboardView: View {
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 40)
                         
-                        Button(action: {
-                            Task {
-                                await viewModel.fetchStepCount()
+                        Button(action: {AllHealthData()
                             }
                         }) {
-                            Label("Fetch Step Count", systemImage: "arrow.down.circle.fill")
+                            Label("Fetch Health Data", systemImage: "arrow.down.circle.fill")
                                 .padding()
                                 .frame(maxWidth: .infinity)
                                 .background(Color.blue)
@@ -158,6 +193,8 @@ struct HealthDashboardView: View {
             .padding()
             .navigationTitle("Health Dashboard")
             // T111: Fetch data when view appears
+            .task {
+                await viewModel.fetchAllHealthDataars
             .task {
                 await viewModel.fetchStepCount()
             }

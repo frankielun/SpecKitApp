@@ -1,30 +1,37 @@
 import Foundation
-// T092: Import KMP SDK framework
-// import shared
+import shared
 
 /// T091: Swift service layer wrapping KMP SDK
 /// This provides a Swift-friendly API for the KMP HealthDataRepository
 class HealthKitService {
-    // Note: Actual KMP SDK integration requires shared.framework to be built and linked
-    // For now, this is a placeholder showing the intended structure
     
     /// T093: Instance of KMP SDK's HealthDataRepository
-    // private let repository: HealthDataRepository
+    private let repository: HealthDataRepository
     
     init() {
         // T093: Initialize with platform-specific HealthDataProvider
-        // self.repository = HealthDataRepository(provider: createHealthDataProvider())
+        let provider = HealthDataProviderKt.createHealthDataProvider()
+        self.repository = HealthDataRepository(provider: provider)
     }
     
     /// T094: Request HealthKit permissions
     /// - Returns: True if authorized, throws error otherwise
     func requestPermissions() async throws -> Bool {
         // T094: Wrap KMP SDK's requestPermissions() in Swift async
-        // let result = try await repository.requestPermissions()
-        // return try mapHealthResult(result)
-        
-        // Placeholder implementation
-        return true
+        return try await withCheckedThrowingContinuation { continuation in
+            repository.requestPermissions { result, error in
+                if let error = error {
+                    continuation.resume(throwing: HealthKitError.unknown(error.localizedDescription))
+                } else if let healthResult = result {
+                    do {
+                        let success = try self.mapHealthResult(healthResult)
+                        continuation.resume(returning: success)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
     }
     
     /// T095: Fetch step count for a date range
@@ -34,37 +41,70 @@ class HealthKitService {
     /// - Returns: Step count value
     func fetchStepCount(from startDate: Date, to endDate: Date) async throws -> Int {
         // T095: Convert Swift Date to Long (Unix timestamp milliseconds)
-        // let startTimestamp = Int64(startDate.timeIntervalSince1970 * 1000)
-        // let endTimestamp = Int64(endDate.timeIntervalSince1970 * 1000)
+        let startTimestamp = Int64(startDate.timeIntervalSince1970 * 1000)
+        let endTimestamp = Int64(endDate.timeIntervalSince1970 * 1000)
         
         // T095: Call KMP SDK's getStepCount()
-        // let result = try await repository.getStepCount(startDate: startTimestamp, endDate: endTimestamp)
-        // let metric = try mapHealthResult(result)
-        // return Int(metric.value)
+        return try await withCheckedThrowingContinuation { continuation in
+            repository.getStepCount(startDate: startTimestamp, endDate: endTimestamp) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: HealthKitError.unknown(error.localizedDescription))
+                } else if let healthResult = result {
+                    do {
+                        let metric: HealthMetric = try self.mapHealthResult(healthResult)
+                        continuation.resume(returning: Int(metric.value))
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+    }
+    
+    /// T336: Fetch heart rate for a date range
+    /// - Parameters:
+    ///   - startDate: Start of the period
+    ///   - endDate: End of the period
+    /// - Returns: Array of heart rate measurements
+    func fetchHeartRate(from startDate: Date, to endDate: Date) async throws -> [HeartRateMeasurement] {
+        let startTimestamp = Int64(startDate.timeIntervalSince1970 * 1000)
+        let endTimestamp = Int64(endDate.timeIntervalSince1970 * 1000)
         
-        // Placeholder: Return mock data
-        return Int.random(in: 5000...15000)
+        return try await withCheckedThrowingContinuation { continuation in
+            repository.getHeartRate(startDate: startTimestamp, endDate: endTimestamp) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: HealthKitError.unknown(error.localizedDescription))
+                } else if let healthResult = result {
+                    do {
+                        let measurements: [HeartRateMeasurement] = try self.mapHealthResult(healthResult)
+                        continuation.resume(returning: measurements)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - T096-T097: Result mapping
     
-    /// T096: Map KMP SDK's HealthResult to Swift Result type
+    /// T096: Map KMP SDK's HealthResult to Swift type
     /// T097: Handle errors with user-friendly messages
-    private func mapHealthResult<T>(_ healthResult: Any /* HealthResult<T> */) throws -> T {
-        // switch healthResult {
-        // case let success as HealthResult.Success<T>:
-        //     return success.data
-        // case is HealthResult.PermissionDenied:
-        //     throw HealthKitError.permissionDenied
-        // case is HealthResult.DataNotAvailable:
-        //     throw HealthKitError.dataNotAvailable
-        // case let unknown as HealthResult.UnknownError:
-        //     throw HealthKitError.unknown(unknown.message)
-        // default:
-        //     throw HealthKitError.unknown("Unexpected error type")
-        // }
-        
-        fatalError("Placeholder implementation")
+    private func mapHealthResult<T>(_ healthResult: HealthResult) throws -> T {
+        if let success = healthResult as? HealthResultSuccess {
+            guard let data = success.data as? T else {
+                throw HealthKitError.unknown("Invalid data type")
+            }
+            return data
+        } else if healthResult is HealthResultPermissionDenied {
+            throw HealthKitError.permissionDenied
+        } else if healthResult is HealthResultDataNotAvailable {
+            throw HealthKitError.dataNotAvailable
+        } else if let unknown = healthResult as? HealthResultUnknownError {
+            throw HealthKitError.unknown(unknown.message)
+        } else {
+            throw HealthKitError.unknown("Unexpected error type")
+        }
     }
 }
 

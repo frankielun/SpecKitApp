@@ -2,6 +2,7 @@ package com.speckit.wellness
 
 import com.speckit.wellness.models.HealthMetric
 import com.speckit.wellness.models.HealthResult
+import com.speckit.wellness.models.HeartRateMeasurement
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.HealthKit.*
 import platform.Foundation.*
@@ -18,11 +19,14 @@ private class IosHealthDataProvider : HealthDataProvider {
      * T037-T038: Request authorization to access HealthKit data.
      */
     override suspend fun requestAuthorization(): HealthResult<Boolean> {
-        // T038: Define the step count type we want to read
+        // T038: Define the data types we want to read
         val stepCountType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)
             ?: return HealthResult.UnknownError("Step count type not available")
         
-        val typesToRead = setOf(stepCountType)
+        val heartRateType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate)
+            ?: return HealthResult.UnknownError("Heart rate type not available")
+        
+        val typesToRead = setOf(stepCountType, heartRateType)
         
         // T037: Request authorization using suspendCancellableCoroutine (T043)
         return suspendCancellableCoroutine { continuation ->
@@ -133,6 +137,89 @@ private class IosHealthDataProvider : HealthDataProvider {
             healthStore.executeQuery(query)
             
             // T043: Handle cancellation
+            continuation.invokeOnCancellation {
+                healthStore.stopQuery(query)
+            }
+        }
+    }
+    
+    /**
+     * T321-T324: Fetch heart rate data using HKSampleQuery.
+     */
+    override suspend fun fetchHeartRate(startDate: Long, endDate: Long): HealthResult<List<HeartRateMeasurement>> {
+        val heartRateType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate)
+            ?: return HealthResult.UnsupportedPlatform("Heart rate type not available on this device")
+        
+        // T322: Convert Unix timestamps to NSDate
+        val startNSDate = NSDate.dateWithTimeIntervalSince1970(startDate / 1000.0)
+        val endNSDate = NSDate.dateWithTimeIntervalSince1970(endDate / 1000.0)
+        
+        val predicate = HKQuery.predicateForSamplesWithStartDate(
+            startDate = startNSDate,
+            endDate = endNSDate,
+            options = HKQueryOptionStrictStartDate
+        )
+        
+        // T322: Use HKSampleQuery to fetch individual heart rate samples
+        return suspendCancellableCoroutine { continuation ->
+            val query = HKSampleQuery(
+                sampleType = heartRateType,
+                predicate = predicate,
+                limit = HKObjectQueryNoLimit.toULong(),
+                sortDescriptors = listOf(
+                    NSSortDescriptor(key = HKSampleSortIdentifierStartDate, ascending = true)
+                )
+            ) { _, samples, error ->
+                when {
+                    error != null -> {
+                        val errorCode = error.code
+                        when (errorCode) {
+                            HKErrorAuthorizationDenied, HKErrorAuthorizationNotDetermined -> {
+                                continuation.resume(
+                                    HealthResult.PermissionDenied(
+                                        "HealthKit permission denied for heart rate. Please enable in Settings."
+                                    )
+                                )
+                            }
+                            else -> {
+                                continuation.resume(
+                                    HealthResult.UnknownError(
+                                        "HealthKit error: ${error.localizedDescription}"
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    samples == null || samples.isEmpty() -> {
+                        // T324: No data available - return empty list
+                        continuation.resume(HealthResult.Success(emptyList()))
+                    }
+                    else -> {
+                        // T323: Extract heart rate values (bpm) from samples
+                        val measurements = samples.mapNotNull { sample ->
+                            (sample as? HKQuantitySample)?.let { quantitySample ->
+                                val bpm = quantitySample.quantity.doubleValueForUnit(
+                                    HKUnit.countUnit().unitDividedByUnit(HKUnit.minuteUnit())
+                                )
+                                val timestamp = (quantitySample.startDate.timeIntervalSince1970 * 1000).toLong()
+                                
+                                HeartRateMeasurement(
+                                    beatsPerMinute = bpm,
+                                    timestamp = timestamp,
+                                    source = "HealthKit"
+                                )
+                            }
+                        }
+                        
+                        continuation.resume(HealthResult.Success(measurements))
+                    }
+                }
+            }
+            
+            // Execute the query
+            healthStore.executeQuery(query)
+            
+            // Handle cancellation
             continuation.invokeOnCancellation {
                 healthStore.stopQuery(query)
             }
